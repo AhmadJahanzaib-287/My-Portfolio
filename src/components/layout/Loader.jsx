@@ -6,6 +6,17 @@ const HANDOFF_DURATION = 2300;
 const LETTER_STAGGER = 36; // har harf kitne ms baad aaye
 const LOADER_NAME = "AHMAD JAHANZAIB";
 
+/* Page ko screen se chaura nahi hone deta (mobile par side se bahar nikalne wali cheez chhupa deta hai).
+   Ye hamesha lagi rehti hai, loader khatam hone ke baad bhi. */
+const PAGE_FIX_STYLES = String.raw`
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+`;
+
 const LOADER_STYLES = String.raw`
 /* ---- Main loader ---- */
 .intro-loader {
@@ -14,7 +25,10 @@ const LOADER_STYLES = String.raw`
   --loader-size: min(var(--text-loader, 96px), calc((100vw - var(--loader-pad) * 2) / var(--loader-fit)));
   position: fixed;
   z-index: 100;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
   height: 100vh;
   height: 100dvh;       /* mobile par URL bar ke hisab se asli screen ki oonchai */
   overflow: hidden;
@@ -348,56 +362,60 @@ function Loader({ onComplete }) {
     };
   }, [isVisible]);
 
-  if (!isVisible) return null;
-
   return (
-    <div
-      className={`intro-loader${isClearing ? " is-clearing" : ""}${isLeaving ? " is-leaving" : ""}`}
-      role="status"
-      aria-label="Loading portfolio"
-    >
-      <style>{LOADER_STYLES}</style>
-      <div className="loader-exit-band" aria-hidden="true"></div>
+    <>
+      <style>{PAGE_FIX_STYLES}</style>
 
-      <div className="loader-sheet">
-        <span className="loader-corner loader-corner-top">PORTFOLIO</span>
-        <span className="loader-corner loader-corner-year">© {new Date().getFullYear()}</span>
+      {isVisible && (
+        <div
+          className={`intro-loader${isClearing ? " is-clearing" : ""}${isLeaving ? " is-leaving" : ""}`}
+          role="status"
+          aria-label="Loading portfolio"
+        >
+          <style>{LOADER_STYLES}</style>
+          <div className="loader-exit-band" aria-hidden="true"></div>
 
-        <div className="loader-name-window">
-          <h1 className="loader-name" aria-label={LOADER_NAME}>
-            {Array.from(LOADER_NAME, (letter, index) => (
-              <span
-                className={`loader-letter${letter === " " ? " loader-letter-space" : ""}`}
-                key={`${letter}-${index}`}
-                style={{ animationDelay: `${index * LETTER_STAGGER}ms` }}
-                aria-hidden="true"
-              >
-                {letter === " " ? "\u00a0" : letter}
-              </span>
-            ))}
-            <span
-              className="loader-letter loader-letter-dot"
-              style={{ animationDelay: `${LOADER_NAME.length * LETTER_STAGGER}ms` }}
-              aria-hidden="true"
-            >
-              .
-            </span>
-          </h1>
+          <div className="loader-sheet">
+            <span className="loader-corner loader-corner-top">PORTFOLIO</span>
+            <span className="loader-corner loader-corner-year">© {new Date().getFullYear()}</span>
+
+            <div className="loader-name-window">
+              <h1 className="loader-name" aria-label={LOADER_NAME}>
+                {Array.from(LOADER_NAME, (letter, index) => (
+                  <span
+                    className={`loader-letter${letter === " " ? " loader-letter-space" : ""}`}
+                    key={`${letter}-${index}`}
+                    style={{ animationDelay: `${index * LETTER_STAGGER}ms` }}
+                    aria-hidden="true"
+                  >
+                    {letter === " " ? "\u00a0" : letter}
+                  </span>
+                ))}
+                <span
+                  className="loader-letter loader-letter-dot"
+                  style={{ animationDelay: `${LOADER_NAME.length * LETTER_STAGGER}ms` }}
+                  aria-hidden="true"
+                >
+                  .
+                </span>
+              </h1>
+            </div>
+
+            <div className="loader-meta">
+              <p className="loader-role">Full-Stack Developer — React &amp;<br />Node.js</p>
+              <p className="loader-percent"><span>{progress}</span><small>%</small></p>
+            </div>
+
+            <progress
+              className="loader-progress"
+              max="100"
+              value={progress}
+              aria-label={`Portfolio loading ${progress}%`}
+            />
+          </div>
         </div>
-
-        <div className="loader-meta">
-          <p className="loader-role">Full-Stack Developer — React &amp;<br />Node.js</p>
-          <p className="loader-percent"><span>{progress}</span><small>%</small></p>
-        </div>
-
-        <progress
-          className="loader-progress"
-          max="100"
-          value={progress}
-          aria-label={`Portfolio loading ${progress}%`}
-        />
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
