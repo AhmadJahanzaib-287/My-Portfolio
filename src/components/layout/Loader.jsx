@@ -9,13 +9,14 @@ const LOADER_NAME = "AHMAD JAHANZAIB";
 const LOADER_STYLES = String.raw`
 /* ---- Main loader ---- */
 .intro-loader {
-  /* Mobile fix: naam ka size screen ki chaurai ke hisab se khud chhota hota hai.
-     Laptop par --text-loader hi use hota hai, isliye wahan koi farq nahi. */
-  --loader-pad: 24px;
-  --loader-size: min(var(--text-loader, 96px), calc((100vw - var(--loader-pad) * 2) / 11.5));
+  --loader-pad: 24px;   /* naam ke dono taraf khali jagah */
+  --loader-fit: 11.5;   /* naam ka size: number barha do to naam chhota hoga */
+  --loader-size: min(var(--text-loader, 96px), calc((100vw - var(--loader-pad) * 2) / var(--loader-fit)));
   position: fixed;
   z-index: 100;
   inset: 0;
+  height: 100vh;
+  height: 100dvh;       /* mobile par URL bar ke hisab se asli screen ki oonchai */
   overflow: hidden;
   color: var(--color-text);
 }
@@ -52,7 +53,7 @@ const LOADER_STYLES = String.raw`
 /* ---- Upar ke kone (PORTFOLIO aur saal) ---- */
 .loader-corner {
   position: absolute;
-  top: 32px;
+  top: calc(32px + env(safe-area-inset-top, 0px));
   color: var(--color-text-muted);
   font-size: 9px;
   font-weight: 700;
@@ -111,7 +112,7 @@ const LOADER_STYLES = String.raw`
 .loader-meta {
   position: absolute;
   right: 26px;
-  bottom: 43px;
+  bottom: calc(43px + env(safe-area-inset-bottom, 0px));
   left: 26px;
   display: flex;
   align-items: end;
@@ -140,11 +141,11 @@ const LOADER_STYLES = String.raw`
   font-size: 20px;
 }
 
-/* ---- Progress bar ---- */
+/* ---- Progress bar (neeche ki line) ---- */
 .loader-progress {
   position: absolute;
   right: 26px;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   left: 26px;
   width: calc(100% - 52px);
   height: 2px;
@@ -168,7 +169,7 @@ const LOADER_STYLES = String.raw`
   background: var(--color-primary);
 }
 
-/* ---- Jab loader saaf ho raha ho ---- */
+/* ---- Jab loader saaf ho raha ho (ye hissa jaan boojh kar sab chhupa deta hai) ---- */
 .intro-loader.is-clearing .loader-corner,
 .intro-loader.is-clearing .loader-meta {
   opacity: 0;
@@ -248,12 +249,13 @@ const LOADER_STYLES = String.raw`
 /* ---- Mobile (680px se kam) ---- */
 @media (max-width: 680px) {
   .intro-loader {
-    --loader-pad: 16px;
+    --loader-pad: 20px;
+    --loader-fit: 14;   /* naam aur chhota chahiye to 16 kar do, bara chahiye to 12 */
   }
 
   .loader-corner {
-    top: 22px;
-    font-size: 8px;
+    top: calc(22px + env(safe-area-inset-top, 0px));
+    font-size: 10px;
     letter-spacing: 0.12em;
   }
 
@@ -267,12 +269,12 @@ const LOADER_STYLES = String.raw`
 
   .loader-meta {
     right: 18px;
-    bottom: 38px;
+    bottom: calc(38px + env(safe-area-inset-bottom, 0px));
     left: 18px;
   }
 
   .loader-role {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .loader-percent {
@@ -285,16 +287,17 @@ const LOADER_STYLES = String.raw`
 
   .loader-progress {
     right: 18px;
-    bottom: 20px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: 18px;
     width: calc(100% - 36px);
+    height: 3px;
   }
 }
 
 /* ---- Bohat chhoti mobile (400px se kam) ---- */
 @media (max-width: 400px) {
   .loader-role {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .loader-percent {
